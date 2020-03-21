@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+  <context:component-scan base-package="egov.practice.mybatis"/>
+  <context:property-placeholder location="classpath:database.properties"/>
+
+  <!-- 1. DataSource 등록 -->
+  <bean id="dataSoruce" class="org.apache.commons.dbcp2.BasicDataSource">
+    <property name="driverClassName" value="${db.driver}"/>
+    <property name="url" value="${db.url}"/>
+    <property name="username" value="${db.name}"/>
+    <property name="password" value="${db.password}"/>
+  </bean>
+
+  <!-- 2. SqlSessionFactoryBean 등록 -->
+  <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSoruce"/>
+    <property name="configLocation" value="classpath:etc.egov/practice/sql-map-config.xml"/>
+  </bean>
+
+  <!-- 3. SqlSessionTemplate 등록 -->
+  <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg ref="sqlSessionFactoryBean"/>
+  </bean>
+
+</beans>

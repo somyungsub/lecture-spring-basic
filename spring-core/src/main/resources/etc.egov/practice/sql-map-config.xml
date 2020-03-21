@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+  <typeAliases>
+    <typeAlias type="egov.practice.mybatis.PracticeVO" alias="PracticeVO"/>
+  </typeAliases>
+  <mappers>
+    <mapper resource="etc.egov/practice/mapper/practice-mapper.xml"/>
+  </mappers>
+</configuration>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+  <context:component-scan base-package="egov.aop"/>
+
+  <bean id="logging" class="egov.aop.advice.LoggingAdvice"/>
+  <bean id="executeTime" class="egov.aop.advice.ExecuteTimeAdvice"/>
+
+  <aop:config>
+    <aop:pointcut id="all" expression="execution(* egov..*.*(..))"/>
+
+    <aop:advisor advice-ref="executeTime" pointcut="execution(* *.print())"/>
+
+    <aop:aspect ref="executeTime">
+      <aop:around method="executeTime" pointcut-ref="all"></aop:around>
+    </aop:aspect>
+
+    <aop:aspect ref="logging">
+      <aop:before method="methodInfo" pointcut="execution(* *.select*(..)) || execution(* *.delete*(..))"/>
+      <aop:before method="methodInfo" pointcut="bean(*Service)"/>
+      <aop:after method="afterMethod" pointcut="execution(* *(..))"/>
+      <aop:after-returning method="afterReturning" pointcut="execution(* * (..))" returning="returnVal"/>
+      <aop:after-throwing method="afterThrowing" pointcut="execution(* *(..))" throwing="ex"/>
+    </aop:aspect>
+  </aop:config>
+
+</beans>

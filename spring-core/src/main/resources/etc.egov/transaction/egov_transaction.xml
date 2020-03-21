@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+  <context:component-scan base-package="egov.transaction"/>
+  <context:property-placeholder location="classpath:database.properties"/>
+
+
+
+  <!-- 1. dataSource 설정  -->
+  <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+    <property name="driverClassName" value="${db.driver}"/>
+    <property name="url" value="${db.url}"/>
+    <property name="username" value="${db.name}"/>
+    <property name="password" value="${db.password}"/>
+  </bean>
+
+  <!-- 2. 트랜잭션 매니저 설정-->
+  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource"/>
+  </bean>
+
+
+  <!-- 3. 트랜잭션 Advice(부가기능) 설정 : AOP 활용 (준비단계) -->
+  <tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <tx:attributes>
+      <tx:method name="insert*"/>
+      <tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.NoSuchMethodException"/>
+     <!-- <tx:method name="delete*"/> -->
+      <tx:method name="select*" read-only="true"/>
+    </tx:attributes>
+  </tx:advice>
+
+  <!-- 4. AOP 설정 (실제 실행단계) : xml 설정기반 -->
+  <aop:config>
+    <aop:pointcut id="txPointcut" expression="execution(* egov.transaction.UserService.*(..))"/>
+    <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+  </aop:config>
+
+  <!-- 4.2 AOP 설정 (실제 실행단계) : annotation 설정기반  -->
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+
+
+  <!-- MyBatis-Spring SqlSessionFactoryBean 설정 -->
+  <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="configLocation" value="classpath:etc.egov/transaction/sql-map-config.xml"/>
+    <property name="mapperLocations" value="classpath:etc.egov/transaction/mapper/user-*.xml"/>
+  </bean>
+
+  <!-- MyBatis-Spring SqlSessionTemplate 설정-->
+  <bean id="template" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg ref="sqlSessionFactoryBean"/>
+  </bean>
+
+
+
+
+</beans>
+

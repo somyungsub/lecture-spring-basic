@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egov.mybatis.UserMapper2">
+
+  <resultMap id="UserVOResult" type="UserVO">
+    <result property="password" column="password"/>
+  </resultMap>
+
+  <select id="selectOne" parameterType="String" resultType="UserVO">
+    SELECT id,name,password FROM user2 WHERE id = #{id}
+  </select>
+
+  <select id="selectOneResultMap" parameterType="string" resultMap="UserVOResult">
+    SELECT id,name,password FROM user2 WHERE id = #{id}
+  </select>
+
+  <select id="selectList" resultType="UserVO">
+    SELECT id, name, password FROM user2
+  </select>
+
+  <delete id="delete" parameterType="string">
+    DELETE FROM user2 WHERE id = #{userid}
+  </delete>
+
+  <delete id="deleteAll">
+    delete from user2
+  </delete>
+
+  <insert id="insert" parameterType="UserVO">
+    INSERT INTO user2(id,name,password) VALUES
+    (#{id},#{name},#{password})
+  </insert>
+
+  <update id="update" parameterType="UserVO">
+    UPDATE user2 SET id = #{id}, name = #{name}, password = #{password} WHERE id = #{id}
+  </update>
+
+  <select id="count" resultType="Integer">
+    SELECT count(*) from user2
+  </select>
+
+  <select id="countAvg절반" resultType="Double">
+    SELECT count(*)/2 from user2
+  </select>
+
+  <insert id="batch" parameterType="list">
+    INSERT INTO user2(id, name, password) VALUES
+    <foreach collection="list" item="userVO" separator=",">
+      (#{userVO.id}, #{userVO.name}, #{userVO.password})
+    </foreach>
+  </insert>
+
+  <select id="if" parameterType="UserVO" resultType="UserVO">
+    SELECT  *
+    FROM    user2
+    <if test=" password.length > 5 ">
+      WHERE name = #{name}
+    </if>
+  </select>
+
+  <select id="when" parameterType="UserVO" resultType="UserVO">
+    SELECT  id, name, password
+    FROM    user2
+    <choose>
+      <when test="id neq '20'">
+        ORDER BY id desc
+      </when>
+      <otherwise>
+        ORDER BY id asc
+      </otherwise>
+    </choose>
+  </select>
+
+
+
+</mapper>
+
+

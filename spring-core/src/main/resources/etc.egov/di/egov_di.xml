@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+  <bean id="userVO" class="egov.di.UserVO"/>
+<!--  <bean name="userVO" class="egov.UserVO"/>-->
+
+  <bean name="anotherUser" class="egov.di.UserVO"/>
+<!--  <bean name="anotherUser" class="egov.UserVO" scope="prototype"/>-->
+  <alias name="anotherUser" alias="anotherUser2"/>
+  <alias name="anotherUser" alias="anotherUser3"/>
+  <bean name="anotherUser2" class="egov.di.UserVO"/>
+  <bean name="anotherUser3" class="egov.di.UserVO"/>
+
+
+  <bean id="lazyUserVO" class="egov.di.UserVOLazy" lazy-init="true"/>
+
+  <bean id="userVOSingle" class="egov.di.UserVO" scope="singleton"/>
+
+  <bean id="userVOPrototype" class="egov.di.UserVO" scope="prototype"/>
+
+  <bean id="userInitDestroyMethod" class="egov.di.UserVO"
+        lazy-init="true" init-method="init" destroy-method="destroy"/>
+  
+  <bean id="userIn" class="egov.di.UserVO">
+  </bean>
+
+  <!-- setter injection -->
+  <bean id="userSetter" class="egov.di.UserVO">
+    <property name="id" value="123"/>
+    <property name="age" value="32"/>
+    <property name="user" ref="userVO"/>
+  </bean>
+
+  <!-- Constructor injection -->
+  <bean id="userConstructor" class="egov.di.UserVO">
+    <constructor-arg name="id" value="123"/>
+    <constructor-arg index="1" value="pass!"/>
+    <constructor-arg type="java.lang.String" value="dddd"/>
+    <constructor-arg type="egov.di.UserVO" ref="userVO"/>
+  </bean>
+
+  <!-- Inner Bean -->
+  <bean id="userInnerBean" class="egov.di.UserVO">
+    <constructor-arg name="id" value="123"/>
+    <constructor-arg index="1" value="pass!"/>
+    <constructor-arg type="java.lang.String" value="dddd"/>
+    <constructor-arg name="user">
+      <bean class="egov.di.UserVO">
+        <property name="id" value="test~!Inner"/>
+        <property name="age" value="32"/>
+      </bean>
+    </constructor-arg>
+    <property name="user2">
+      <bean class="egov.di.UserVO">
+        <property name="id" value="test"/>
+        <property name="age" value="23"/>
+      </bean>
+    </property>
+  </bean>
+
+  <!-- Collection -->
+
+  <bean id="userCollection" class="egov.di.UserVO">
+    <property name="list">
+      <list>
+        <value>1</value>
+        <value>1</value>
+        <value>2</value>
+        <value>Hello</value>
+      </list>
+    </property>
+    <property name="set">
+      <set>
+        <value>1</value>
+        <value>1</value>
+        <value>2</value>
+        <value>Hello</value>
+      </set>
+    </property>
+    <property name="map">
+      <map>
+        <entry key="1"><value>11</value></entry>
+        <entry key="2" value="22"></entry>
+        <entry key="3" value="33"></entry>
+      </map>
+    </property>
+    <property name="properties">
+      <props>
+        <prop key="1">11</prop>
+        <prop key="2">22</prop>
+        <prop key="3">Hello</prop>
+      </props>
+    </property>
+  </bean>
+
+
+<!--  <context:annotation-config/>-->
+  <context:component-scan base-package="egov.di"/>
+<!--  <bean name="springJdbcDao" class="egov.di.SpringJdbcDao">-->
+<!--    <property name="s" value="1"/>-->
+<!--  </bean>-->
+<!--  <bean name="springJdbcDao2" class="egov.SpringJdbcDao">-->
+<!--    <property name="s" value="2"/>-->
+<!--  </bean>-->
+<!--  <bean id="springJdbcDao3" name="springJdbcDao4" class="egov.SpringJdbcDao">-->
+<!--    <property name="s" value="3"/>-->
+<!--  </bean>-->
+
+<!--  <bean name="jdbcDao" class="egov.JdbcDao"></bean>-->
+
+
+  <bean class="egov.di.Dept">
+    <property name="id" value="123"/>
+    <property name="name" value="it"/>
+  </bean>
+
+
+</beans>
